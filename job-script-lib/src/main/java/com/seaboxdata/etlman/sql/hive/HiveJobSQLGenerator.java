@@ -26,7 +26,7 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
     @Override
     protected String genJobPreprocess() {
 
-        // For batch level script, not job level pre-process script is needed.
+        // For batch level script, no job level pre-process script is needed.
         if (etlTask.getEtlEntity().isSingleSource())
             return "";
 

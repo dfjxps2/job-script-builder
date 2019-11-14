@@ -64,33 +64,18 @@ public abstract class JobSQLGenerator {
         return buffer.toString();
     }
 
-    protected String genBatchScript(ETLLoadBatch loadBatch) throws Exception {
+    private String genBatchScript(ETLLoadBatch loadBatch) throws Exception {
         loadBatch.setBatchScript(genBatchPreprocess(loadBatch) +
                 genBatchBody(loadBatch) + genBatchPostprocess(loadBatch));
         return loadBatch.getBatchScript();
     }
 
-    protected String genJobBody() throws Exception {
-        StringBuilder buffer = new StringBuilder();
+
+    public Map<Integer, String> genJobScript() throws Exception {
+        Map<Integer, String> scripts = new HashMap<>();
+
         for (ETLLoadBatch loadBatch : etlTask.getEtlEntity().getEtlLoadBatches())
-            buffer.append(genBatchScript(loadBatch));
-
-        return buffer.toString();
-    }
-
-    public Map<String, String> genJobScript() throws Exception {
-        Map<String, String> scripts = new HashMap<String, String>();
-
-        if (!etlTask.getEtlEntity().isSingleSource()) {
-            StringBuilder buffer = new StringBuilder();
-            for (ETLLoadBatch batch : etlTask.getEtlEntity().getEtlLoadBatches())
-                buffer.append(genBatchScript(batch));
-            scripts.put(etlTask.getTaskName() + ".sql", buffer.toString());
-        } else {
-            for (ETLLoadBatch loadBatch : etlTask.getEtlEntity().getEtlLoadBatches())
-                scripts.put(etlTask.getTaskName() + "_" + String.valueOf(loadBatch.getLoadBatch()) + ".sql",
-                        genBatchScript(loadBatch));
-        }
+            scripts.put(loadBatch.getLoadBatch(), genBatchScript(loadBatch));
 
         return scripts;
     }

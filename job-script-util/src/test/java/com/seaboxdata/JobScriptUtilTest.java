@@ -61,6 +61,37 @@ public class JobScriptUtilTest {
 
     }
 
+    @Test
+    public void testBatchSQLGenerator_1() throws Exception {
+        jobScriptBuilder.getBatchScriptForEntity("基础层主表1").forEach((batchNo, sql) -> {
+            System.out.println(String.format("\n批次 %d 脚本：\n%s", batchNo, sql));
+
+        });
+    }
+
+    @Test
+    public void testBatchSQLGenerator_2() throws Exception {
+        jobScriptBuilder.getBatchScriptForEntity("基础层主表2").forEach((batchNo, sql) -> {
+            System.out.println(String.format("\n批次 %d 脚本：\n%s", batchNo, sql));
+
+        });
+    }
+
+    @Test
+    public void testBatchSQLGenerator_3() throws Exception {
+        jobScriptBuilder.getBatchScriptForEntity("基础层主表3").forEach((batchNo, sql) -> {
+            System.out.println(String.format("\n批次 %d 脚本：\n%s", batchNo, sql));
+
+        });
+    }
+    @Test
+    public void testBatchSQLGenerator_4() throws Exception {
+        jobScriptBuilder.getBatchScriptForEntity("法人").forEach((batchNo, sql) -> {
+            System.out.println(String.format("\n批次 %d 脚本：\n%s", batchNo, sql));
+
+        });
+    }
+
     @After
     public void cleanup() {
     }
