@@ -411,13 +411,14 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
             if (groupIdx > filterConditions.length - 1)
                 groupIdx = filterConditions.length - 1;
 
-            bufForTable.append(" ").append("(").append(filterConditions[groupIdx].trim()).append(")");
-            isFirstTable = false;
-
-            filterLength += filterConditions[groupIdx].trim().length();
-
-            if (filterConditions[groupIdx].trim().length() > 0)
+            if (filterConditions[groupIdx].trim().length() > 0) {
+                bufForTable.append(" ")
+                        .append("(").append(filterConditions[groupIdx].trim()).append(")");
                 buffer.append(bufForTable);
+                isFirstTable = false;
+
+                filterLength += filterConditions[groupIdx].trim().length();
+            }
         }
 
         if (filterLength > 0)
