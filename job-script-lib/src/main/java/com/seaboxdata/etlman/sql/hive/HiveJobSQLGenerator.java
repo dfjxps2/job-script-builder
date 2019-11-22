@@ -2,6 +2,7 @@ package com.seaboxdata.etlman.sql.hive;
 
 import com.seaboxdata.etlman.metastore.*;
 import com.seaboxdata.etlman.sql.JobSQLGenerator;
+import com.seaboxdata.etlman.sql.JobSQLGeneratorBadConfigurationException;
 import com.seaboxdata.etlman.sql.JobSQLGeneratorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -325,17 +326,19 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
             ETLColumnMapping mapping = getMapping(loadGroup, column);
             if (mapping == null) {
                 buffer.delete(0, buffer.length());
-                logger.error("Mapping not found for batch: " + loadGroup.getLoadBatch().getLoadBatch() + ", group: " + loadGroup.getLoadGroup() +
-                        ", column: " + column.getColumnName() + " !");
-                exit(-1);
+                String msg = "Mapping not found for batch: " + loadGroup.getLoadBatch().getLoadBatch() + ", group: " + loadGroup.getLoadGroup() +
+                        ", column: " + column.getColumnName() + " !";
+                logger.error(msg);
+                throw new JobSQLGeneratorBadConfigurationException(msg);
             }
 
             if ((mapping.getExpression() == null || mapping.getExpression().trim().length() == 0)
                     && mapping.getSrcColumnList().get(0).getColumnName().equals("")) {
-                logger.error(String.format("Entity: %s, batch: %d, group: %d, expression for mapping [%s] <- [%s] is not specified.",
+                String msg = String.format("Entity: %s, batch: %d, group: %d, expression for mapping [%s] <- [%s] is not specified.",
                         etlTask.getEtlEntity().getEntityName(), loadGroup.getLoadBatch().getLoadBatch(), loadGroup.getLoadGroup(),
-                        mapping.getEntityAttribute().getColumnName(), mapping.getSrcColumnList().get(0).getColumnName()));
-                exit(-1);
+                        mapping.getEntityAttribute().getColumnName(), mapping.getSrcColumnList().get(0).getColumnName());
+                logger.error(msg);
+                throw new JobSQLGeneratorBadConfigurationException(msg);
             }
 
             if (mapping.getExpression().trim().length() == 0) {
@@ -358,10 +361,11 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
 
             if ((mapping.getExpression() == null || mapping.getExpression().trim().length() == 0)
                     && mapping.getSrcColumnList().get(0).getColumnName().equals("")) {
-                System.out.println(String.format("Entity: %s, Batch: %d, Group: %d, Expression for Mapping [%s] <- [%s] is not specified.",
+                String msg = String.format("Entity: %s, Batch: %d, Group: %d, Expression for Mapping [%s] <- [%s] is not specified.",
                         etlTask.getEtlEntity().getEntityName(), loadGroup.getLoadBatch().getLoadBatch(), loadGroup.getLoadGroup(),
-                        mapping.getEntityAttribute().getColumnName(), mapping.getSrcColumnList().get(0).getColumnName()));
-                exit(-1);
+                        mapping.getEntityAttribute().getColumnName(), mapping.getSrcColumnList().get(0).getColumnName());
+                logger.error(msg);
+                throw new JobSQLGeneratorBadConfigurationException(msg);
             }
 
             if (mapping.getExpression().trim().length() == 0) {
@@ -538,8 +542,9 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
             }
 
         if (defaultGroup == null) {
-            logger.error("Default load group was not found!");
-            exit(-1);
+            String msg = "Default load group was not found!";
+            logger.error(msg);
+            throw new JobSQLGeneratorBadConfigurationException(msg);
         }
 
         for (ETLColumnMapping mapping : defaultGroup.getColumnMappings())
