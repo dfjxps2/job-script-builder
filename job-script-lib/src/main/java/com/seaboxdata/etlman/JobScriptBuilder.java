@@ -46,11 +46,11 @@ public class JobScriptBuilder {
     }
 
 
-    public String getSQLScriptForEntity(String entityName) throws Exception {
+    public String getSQLScriptForTask(String taskName) throws Exception {
 
-        String[] res = new String[]{"\n-- Job Script for " + entityName + "\n"};
+        String[] res = new String[]{String.format("\n-- Job Script for %s\n", taskName)};
 
-        Map<Integer, String> scripts = getBatchScriptForEntity(entityName);
+        Map<Integer, String> scripts = getBatchScriptForTask(taskName);
 
         scripts.values()
                 .stream()
@@ -60,10 +60,10 @@ public class JobScriptBuilder {
         return res[0];
     }
 
-    public Map<Integer, String> getBatchScriptForEntity(String entityName) throws Exception {
+    public Map<Integer, String> getBatchScriptForTask(String taskName) throws Exception {
 
         for (ETLTask task : etlTaskList) {
-            if (task.getEtlEntity().getEntityName().equals(entityName)) {
+            if (task.getTaskName().equals(taskName)) {
                 JobSQLGenerator sqlGenerator = new HiveJobSQLGenerator(task);
 
                 return sqlGenerator.genJobScript();

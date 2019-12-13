@@ -30,13 +30,13 @@ public class JobScriptUtil implements CommandLineRunner {
         if (args.length == 0)
             return;
 
-        String entityName = args[0];
+        String taskName = args[0];
         String outputDir = args[1];
 
         jobScriptBuilder.initETLTasks();
 
-        String script = jobScriptBuilder.getSQLScriptForEntity(entityName);
-        FileWriter fileWriter = new FileWriter(outputDir + File.separator + entityName + ".sql");
+        String script = jobScriptBuilder.getSQLScriptForTask(taskName);
+        FileWriter fileWriter = new FileWriter(outputDir + File.separator + taskName + ".sql");
 
         fileWriter.write(script);
 
