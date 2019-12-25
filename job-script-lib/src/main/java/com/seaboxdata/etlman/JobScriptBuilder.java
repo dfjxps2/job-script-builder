@@ -3,6 +3,7 @@ package com.seaboxdata.etlman;
 import com.seaboxdata.etlman.metastore.ETLTask;
 import com.seaboxdata.etlman.metastore.ETLEntity;
 import com.seaboxdata.etlman.sql.JobSQLGenerator;
+import com.seaboxdata.etlman.sql.JobSQLGeneratorConfig;
 import com.seaboxdata.etlman.sql.hive.HiveJobSQLGenerator;
 
 import javax.sql.DataSource;
@@ -12,6 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class JobScriptBuilder {
 
@@ -23,7 +25,12 @@ public class JobScriptBuilder {
         metaDBConn = aDataSource.getConnection();
     }
 
-    public void initETLTasks() throws Exception {
+    public JobScriptBuilder setWorkingDBName(String workingDBName) {
+        JobSQLGeneratorConfig.workingDBName = workingDBName;
+        return this;
+    }
+
+    public JobScriptBuilder initETLTasks() throws Exception {
         Statement statement = metaDBConn.createStatement();
 
         ResultSet rs = statement.executeQuery("select * from etl_tasks where sys_name = '数据平台'");
@@ -43,8 +50,9 @@ public class JobScriptBuilder {
             etlTaskList.add(etlTask);
         }
         rs.close();
-    }
 
+        return this;
+    }
 
     public String getSQLScriptForTask(String taskName) throws Exception {
 

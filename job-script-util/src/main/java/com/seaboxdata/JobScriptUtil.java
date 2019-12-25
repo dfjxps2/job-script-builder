@@ -2,6 +2,7 @@ package com.seaboxdata;
 
 import com.seaboxdata.etlman.JobScriptBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +15,9 @@ import java.io.FileWriter;
 public class JobScriptUtil implements CommandLineRunner {
 
     private JobScriptBuilder jobScriptBuilder;
+
+    @Value("${job-script.working.db.name}")
+    private String workingDBName;
 
     public static void main(String[] args) {
         SpringApplication.run(JobScriptUtil.class, args);
@@ -33,7 +37,7 @@ public class JobScriptUtil implements CommandLineRunner {
         String taskName = args[0];
         String outputDir = args[1];
 
-        jobScriptBuilder.initETLTasks();
+        jobScriptBuilder.initETLTasks().setWorkingDBName(workingDBName);
 
         String script = jobScriptBuilder.getSQLScriptForTask(taskName);
         FileWriter fileWriter = new FileWriter(outputDir + File.separator + taskName + ".sql");

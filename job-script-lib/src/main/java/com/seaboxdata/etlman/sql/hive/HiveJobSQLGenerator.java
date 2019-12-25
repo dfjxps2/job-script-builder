@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static java.lang.System.exit;
-
 /**
  * Created by xiaoy on 1/5/2017.
  */
@@ -93,7 +91,8 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
             if (batch.getLoadBatch() != batchNo && batchNo != 0)
                 continue;
             for (ETLLoadGroup group : batch.getLoadGroupList()) {
-                workingTable = etlTask.getEtlEntity().getPhyTableName() +
+                workingTable = JobSQLGeneratorConfig.workingDBName +
+                        "." + etlTask.getEtlEntity().getPhyTableName() +
                         "_" + JobSQLGeneratorConfig.workDate8VarName +
                         "_" + batch.getLoadBatch() +
                         "_" + group.getLoadGroup();
@@ -118,7 +117,8 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
             if (batch.getLoadBatch() != batchNo && batchNo != 0)
                 continue;
             for (ETLLoadGroup group : batch.getLoadGroupList()) {
-                workingTable = etlTask.getEtlEntity().getPhyTableName() +
+                workingTable = JobSQLGeneratorConfig.workingDBName +
+                        "." + etlTask.getEtlEntity().getPhyTableName() +
                         "_" + JobSQLGeneratorConfig.workDate8VarName +
                         "_" + batch.getLoadBatch() +
                         "_" + group.getLoadGroup();
@@ -238,7 +238,8 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
                 groupWorkingTables.add(group.getWorkingTable());
             }
 
-            String mergeTempTable = etlTask.getEtlEntity().getPhyTableName() + "_" + batch.getLoadBatch() + "_merge";
+            String mergeTempTable = JobSQLGeneratorConfig.workingDBName + "."
+                    + etlTask.getEtlEntity().getPhyTableName() + "_" + batch.getLoadBatch() + "_merge";
 
             buffer.append("\nDROP TABLE IF EXISTS ").append(mergeTempTable).append(";");
             buffer.append("\nCREATE TABLE ")
