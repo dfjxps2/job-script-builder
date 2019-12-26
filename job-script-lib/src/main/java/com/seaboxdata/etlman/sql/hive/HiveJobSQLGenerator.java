@@ -157,8 +157,9 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
     void appendTableUpdate(StringBuilder buffer, List<String> newTables, String oldTable,
                            String partition, String targetTable) {
         buffer.append("\nINSERT OVERWRITE TABLE ").append(targetTable);
-        buffer.append(String.format("\nPARTITION (%s = '%s'",
-                JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName));
+        buffer.append(String.format("\nPARTITION (%s = '%s', %s",
+                JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName,
+                JobSQLGeneratorConfig.dataSrcColName));
 
         for (ETLEntityAttribute partKey : getPartitionKeys())
             buffer.append(", ").append(partKey.getPhyName());
@@ -312,7 +313,10 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
 
         buffer.append("\nINSERT OVERWRITE TABLE ").append(loadGroup.getWorkingTable());
 
-        buffer.append(String.format("\nPARTITION (%s = '%s'", JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName));
+        buffer.append(String.format("\nPARTITION (%s = '%s', %s",
+                JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName,
+                JobSQLGeneratorConfig.dataSrcColName));
+
         for (ETLEntityAttribute partKey : getPartitionKeys())
             buffer.append(", ").append(partKey.getPhyName());
         buffer.append(")");
@@ -486,22 +490,13 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
         List<ETLEntityAttribute> partitionKeys = new ArrayList<ETLEntityAttribute>();
 
         for (ETLEntityAttribute attribute : etlTask.getEtlEntity().getEtlEntityAttributes()) {
-            if (attribute.getPartitionKey() != 0)
+            if (attribute.getPartitionKey() != 0
+                    && !attribute.getColumnName().equals(JobSQLGeneratorConfig.loadDateColName)
+                    && !attribute.getColumnName().equals(JobSQLGeneratorConfig.dataSrcColName))
                 partitionKeys.add(attribute);
         }
 
-        Collections.sort(partitionKeys, new Comparator<ETLEntityAttribute>() {
-
-            @Override
-            public int compare(ETLEntityAttribute o1, ETLEntityAttribute o2) {
-                if (o1.getPartitionKey() < o2.getPartitionKey())
-                    return -1;
-                else if (o1.getPartitionKey() > o2.getPartitionKey())
-                    return 1;
-                else
-                    return 0;
-            }
-        });
+        partitionKeys.sort(Comparator.comparingInt(ETLEntityAttribute::getColumnId));
 
         return partitionKeys;
     }

@@ -19,6 +19,12 @@ public class JobScriptUtil implements CommandLineRunner {
     @Value("${job-script.working.db.name}")
     private String workingDBName;
 
+    @Value("${job-script.data.src.col.name}")
+    private String dataSrcColName;
+
+    @Value("${job-script.load.date.col.name}")
+    private String loadDateColName;
+
     public static void main(String[] args) {
         SpringApplication.run(JobScriptUtil.class, args);
     }
@@ -37,7 +43,10 @@ public class JobScriptUtil implements CommandLineRunner {
         String taskName = args[0];
         String outputDir = args[1];
 
-        jobScriptBuilder.initETLTasks().setWorkingDBName(workingDBName);
+        jobScriptBuilder.initETLTasks()
+                .setWorkingDBName(workingDBName)
+                .setLoadDateColName(loadDateColName)
+                .setDataSrcColName(dataSrcColName);
 
         String script = jobScriptBuilder.getSQLScriptForTask(taskName);
         FileWriter fileWriter = new FileWriter(outputDir + File.separator + taskName + ".sql");

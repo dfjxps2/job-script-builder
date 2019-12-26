@@ -30,6 +30,16 @@ public class JobScriptBuilder {
         return this;
     }
 
+    public JobScriptBuilder setLoadDateColName(String loadDateColName){
+        JobSQLGeneratorConfig.loadDateColName = loadDateColName;
+        return this;
+    }
+
+    public JobScriptBuilder setDataSrcColName(String dataSrcColName){
+        JobSQLGeneratorConfig.dataSrcColName = dataSrcColName;
+        return this;
+    }
+
     public JobScriptBuilder initETLTasks() throws Exception {
         Statement statement = metaDBConn.createStatement();
 
