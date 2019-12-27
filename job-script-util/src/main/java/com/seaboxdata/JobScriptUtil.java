@@ -1,6 +1,7 @@
 package com.seaboxdata;
 
 import com.seaboxdata.etlman.JobScriptBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -11,6 +12,7 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileWriter;
 
+@Slf4j
 @SpringBootApplication
 public class JobScriptUtil implements CommandLineRunner {
 
@@ -43,6 +45,7 @@ public class JobScriptUtil implements CommandLineRunner {
         String taskName = args[0];
         String outputDir = args[1];
 
+        log.info("Building job script for table {} ...", taskName);
         jobScriptBuilder.initETLTasks()
                 .setWorkingDBName(workingDBName)
                 .setLoadDateColName(loadDateColName)
