@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Scanner;
 
 @Slf4j
 @SpringBootApplication
@@ -45,17 +46,35 @@ public class JobScriptUtil implements CommandLineRunner {
         String taskName = args[0];
         String outputDir = args[1];
 
+        genScript(taskName, outputDir, "1");
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Press enter to continue ...");
+        String s = scanner.next();
+
+        genScript(taskName, outputDir, "2");
+
+    }
+
+    private void genScript(String taskName, String outputDir, String suffix) throws Exception {
         log.info("Building job script for table {} ...", taskName);
+
         jobScriptBuilder.initETLTasks()
                 .setWorkingDBName(workingDBName)
                 .setLoadDateColName(loadDateColName)
                 .setDataSrcColName(dataSrcColName);
 
         String script = jobScriptBuilder.getSQLScriptForTask(taskName);
-        FileWriter fileWriter = new FileWriter(outputDir + File.separator + taskName + ".sql");
+
+        System.out.println(script);
+
+        FileWriter fileWriter = new FileWriter(
+                outputDir + File.separator + taskName + "_" + suffix + ".sql");
 
         fileWriter.write(script);
 
         fileWriter.close();
+
     }
+
 }

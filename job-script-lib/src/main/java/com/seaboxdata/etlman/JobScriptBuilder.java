@@ -43,6 +43,8 @@ public class JobScriptBuilder {
     public JobScriptBuilder initETLTasks() throws Exception {
         Statement statement = metaDBConn.createStatement();
 
+        etlTaskList = new ArrayList<ETLTask>();
+
         ResultSet rs = statement.executeQuery("select * from etl_tasks where sys_name = '数据平台'");
         while (rs.next()) {
             ETLTask etlTask = new ETLTask();
