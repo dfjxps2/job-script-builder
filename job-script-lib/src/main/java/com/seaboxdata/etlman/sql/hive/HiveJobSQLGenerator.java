@@ -273,8 +273,9 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
 
             for (ETLLoadGroup group : batch.getLoadGroupList()) {
                 buffer.append("\nINSERT INTO TABLE ").append(etlTask.getEtlEntity().getPhyTableName());
-                buffer.append(String.format("\nPARTITION (%s = '%s'", JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName));
-
+                buffer.append(String.format("\nPARTITION (%s = '%s', %s",
+                        JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName,
+                        JobSQLGeneratorConfig.dataSrcColName));
                 appendColumnList(buffer);
 
                 buffer.append("\nFROM ").append(group.getWorkingTable());
