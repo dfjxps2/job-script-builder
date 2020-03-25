@@ -49,3 +49,10 @@ java -jar job-script-util-1.0-SNAPSHOT.jar 法人_测试 /c/tmp
 3. 系统将生成的脚本存放在可配置的目录下，文件名可以使用作业名称。
 4. 系统提示“试运行作业脚本已生成，存放路径为 ... ...”。
 5. 操作员到指定目录下提取脚本手工执行测试。
+
+## FAQ
+1. sync_job_configuration报：
+    ```
+    [Err] 1062 - Duplicate entry '数据平台-<db-name>-<table-name>-<column-name>' for key 'PRIMARY'
+    ```
+    检查融合作业目标表的字段中文名是否有重复（data_fld.fld_cn_name）
