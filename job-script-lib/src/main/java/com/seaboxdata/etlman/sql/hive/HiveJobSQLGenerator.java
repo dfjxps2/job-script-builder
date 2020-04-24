@@ -271,8 +271,17 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
             if (batchNo != 0 && batch.getLoadBatch() != batchNo)
                 continue;
 
+            // Use 'INSERT OVERWRITE' to enable automatic re-load for tables loaded by append. But this is
+            // only valid if this table doesn't have any dynamic partition column except for data_dt and data_src_tbl.
+            boolean firstGroup = true;
             for (ETLLoadGroup group : batch.getLoadGroupList()) {
-                buffer.append("\nINSERT INTO TABLE ").append(etlTask.getEtlEntity().getPhyTableName());
+                if (!firstGroup) buffer.append("\nINSERT INTO TABLE ");
+                else {
+                    buffer.append("\nINSERT OVERWRITE TABLE ");
+                    firstGroup = false;
+                }
+
+                buffer.append(etlTask.getEtlEntity().getPhyTableName());
                 buffer.append(String.format("\nPARTITION (%s = '%s', %s",
                         JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName,
                         JobSQLGeneratorConfig.dataSrcColName));
