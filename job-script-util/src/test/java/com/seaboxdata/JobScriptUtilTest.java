@@ -35,7 +35,7 @@ public class JobScriptUtilTest {
 
     @Test
     public void testJobSQLGenerator_1() throws Exception {
-        String sql = jobScriptBuilder.getSQLScriptForTask("基础层主表1");
+        String sql = jobScriptBuilder.getSQLScriptForTask("GGXY_XBZ_测试");
 
         System.out.println(sql);
 

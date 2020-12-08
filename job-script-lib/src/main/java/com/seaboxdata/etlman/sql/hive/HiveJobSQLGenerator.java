@@ -157,9 +157,15 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
     void appendTableUpdate(StringBuilder buffer, List<String> newTables, String oldTable,
                            String partition, String targetTable) {
         buffer.append("\nINSERT OVERWRITE TABLE ").append(targetTable);
-        buffer.append(String.format("\nPARTITION (%s = '%s', %s",
-                JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName,
-                JobSQLGeneratorConfig.dataSrcColName));
+
+        if (JobSQLGeneratorConfig.dataSrcColName.trim().length() == 0) {
+            buffer.append(String.format("\nPARTITION (%s = '%s'",
+                    JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName));
+
+        } else
+            buffer.append(String.format("\nPARTITION (%s = '%s', %s",
+                    JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName,
+                    JobSQLGeneratorConfig.dataSrcColName));
 
         for (ETLEntityAttribute partKey : getPartitionKeys())
             buffer.append(", ").append(partKey.getPhyName());
@@ -282,9 +288,16 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
                 }
 
                 buffer.append(etlTask.getEtlEntity().getPhyTableName());
-                buffer.append(String.format("\nPARTITION (%s = '%s', %s",
+
+                if (JobSQLGeneratorConfig.dataSrcColName.trim().length() == 0) {
+                    buffer.append(String.format("\nPARTITION (%s = '%s'",
+                            JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName));
+
+                } else
+                    buffer.append(String.format("\nPARTITION (%s = '%s', %s",
                         JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName,
                         JobSQLGeneratorConfig.dataSrcColName));
+
                 appendColumnList(buffer);
 
                 buffer.append("\nFROM ").append(group.getWorkingTable());
@@ -323,7 +336,11 @@ public class HiveJobSQLGenerator extends JobSQLGenerator {
 
         buffer.append("\nINSERT OVERWRITE TABLE ").append(loadGroup.getWorkingTable());
 
-        buffer.append(String.format("\nPARTITION (%s = '%s', %s",
+        if (JobSQLGeneratorConfig.dataSrcColName.trim().length() == 0) {
+            buffer.append(String.format("\nPARTITION (%s = '%s'",
+                    JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName));
+        } else
+            buffer.append(String.format("\nPARTITION (%s = '%s', %s",
                 JobSQLGeneratorConfig.loadDateColName, JobSQLGeneratorConfig.workDateVarName,
                 JobSQLGeneratorConfig.dataSrcColName));
 
